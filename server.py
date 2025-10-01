@@ -7,7 +7,6 @@ import os
 from datetime import datetime
 
 start_time = datetime.now()
-imap_date = start_time.strftime("%d-%b-%Y")  # IMAP format: 24-Sep-2025
 load_dotenv()
 
 EMAIL = os.getenv("EMAIL")
@@ -28,7 +27,7 @@ def read_responses():
     waiting = True
     while waiting:
         mail.select('inbox')
-        _, messages = mail.search(None, f'(SINCE "{imap_date}" UNSEEN SUBJECT "Response")')
+        _, messages = mail.search(None, '(UNSEEN SUBJECT "Response")')
         if messages is not None:
             for num in messages[0].split():
                 _, data = mail.fetch(num, '(RFC822)')

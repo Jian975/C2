@@ -35,7 +35,7 @@ def check_for_commands():
         _, data = mail.fetch(num, '(RFC822)')
         raw_email = data[0][1]#email contents at this spot
         parse_and_execute(raw_email)
-        mail.store(num, '+FLAGS', '\\Seen')  # Optional: mark as seen
+        mail.store(num, '+FLAGS', '\\Seen')
         mail.expunge()
 
 
