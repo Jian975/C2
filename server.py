@@ -6,12 +6,13 @@ from dotenv import load_dotenv
 import os
 from datetime import datetime
 
-start_time = datetime.now()
 load_dotenv()
 
 EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("PASSWORD")
-smtp = smtplib.SMTP_SSL('imap.gmail.com', 465)
+
+#imap for receiving email, smtp for sending email
+smtp = smtplib.SMTP_SSL('smtp.gmail.com', 465)
 smtp.login(EMAIL, PASSWORD)
 mail = imaplib.IMAP4_SSL('imap.gmail.com')
 mail.login(EMAIL, PASSWORD)
