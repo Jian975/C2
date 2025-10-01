@@ -25,17 +25,17 @@ def send_command(command):
     smtp.sendmail(EMAIL, EMAIL, msg.as_string())
 
 def read_responses():
-    mail.select('inbox')
     waiting = True
     while waiting:
-        _, messages = mail.search(None, f'(SINCE "{imap_date}" SUBJECT "Response")')
+        mail.select('inbox')
+        _, messages = mail.search(None, f'(SINCE "{imap_date}" UNSEEN SUBJECT "Response")')
         if messages is not None:
             for num in messages[0].split():
                 _, data = mail.fetch(num, '(RFC822)')
                 raw_email = data[0][1]
                 msg = email.message_from_bytes(raw_email)
                 print(msg.get_payload(decode=True).decode())
-                mail.store(num, '+FLAGS', '\\Deleted')
+                mail.store(num, '+FLAGS', '\\Seen')
                 mail.expunge()
                 waiting = False
 
